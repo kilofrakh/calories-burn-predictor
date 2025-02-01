@@ -7,6 +7,12 @@ from sklearn.svm import SVC
 from xgboost import XGBRegressor
 from flask import Flask, render_template, request
 import warnings
+import json
+
+data = []
+def save_data():
+                with open("data.json", "w") as file:
+                    json.dump(data, file)
 
 app = Flask(__name__)
 
@@ -49,11 +55,15 @@ def predict():
             float(request.form['Running Speed(km/h)']),
             float(request.form['Distance(km)'])
             ]
+            data.append(user_input)
+            
         except:
             return render_template('index.html', prediction='Please enter valid input')
         user_input = np.array(user_input).reshape(1, -1)
         user_input_scaled = scaler.transform(user_input)
         prediction = r.predict(user_input_scaled)
+        data.append(prediction.tolist())
+        save_data()
         return render_template('index.html', prediction=f'Predicted Calories: {prediction[0]:.2f}')
 
 
