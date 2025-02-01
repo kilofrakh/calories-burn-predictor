@@ -1,0 +1,1 @@
+{"name": {"inputs": [{"Name": "abdo", "Duration": 1.0, "Gender": 1.0, "Age": 1.0, "Weight": 1.0, "Height": 1.0, "Running Speed(km/h)": 1.0, "Distance(km)": 1.0}, {"Name": "abdo", "Duration": 1.0, "Gender": 1.0, "Age": 1.0, "Weight": 1.0, "Height": 1.0, "Running Speed(km/h)": 1.0, "Distance(km)": 1.0}], "predictions": [{"Name": "abdo", "Prediction": 

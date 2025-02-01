@@ -14,33 +14,17 @@
 </head>
 <body>
     <h2>Calories Burned Predictor</h2>
+    <p>Enter your details to predict the number of calories burned during a run.</p>
     <form action="/predict" method="post">
-        <label>Enter your name:</label>
-        <input type="text" name="Name" required><br>
-        
-        <label>Duration (minutes):</label>
-        <input type="number" step="0.1" name="Duration" required><br>
-
-        <label>Gender (0=Male, 1=Female):</label>
-        <input type="number" step="1" name="Gender" required><br>
-
-        <label>Age:</label>
-        <input type="number" step="1" name="Age" required><br>
-
-        <label>Weight (kg):</label>
-        <input type="number" step="0.1" name="Weight" required><br>
-
-        <label>Height (cm):</label>
-        <input type="number" step="0.1" name="Height" required><br>
-
-        <label>Running Speed (km/h):</label>
-        <input type="number" step="0.1" name="Running Speed(km/h)" required><br>
-
-        <label>Distance (km):</label>
-        <input type="number" step="0.1" name="Distance(km)" required><br>
-
+        <input type="text" name="Name" placeholder="Enter your name" required>
+        <input type="number" name="Duration" placeholder="Duration" required>
+        <input type="number" name="Gender" placeholder="Gender" required>
+        <input type="number" name="Age" placeholder="Age" required>
+        <input type="number" name="Weight" placeholder="Weight" required>
+        <input type="number" name="Height" placeholder="Height" required>
+        <input type="number" name="Running Speed(km/h)" placeholder="Running Speed(km/h)" required>
+        <input type="number" name="Distance(km)" placeholder="Distance(km)" required>
         <button type="submit">Predict</button>
-
     </form>
 
     {% if prediction %}

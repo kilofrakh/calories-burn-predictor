@@ -8,19 +8,42 @@ from xgboost import XGBRegressor
 from flask import Flask, render_template, request
 import warnings
 import json
+import csv
+
+with open('data.csv', mode='r') as file:
+    csv_reader = csv.reader(file)
+    for row in csv_reader:
+        print(row)
 
 data = {
-    "name":{
+    "name": {
         "inputs": [],
         "predictions": []
     }
 }
-def save_data():
-    with open('data.json', 'w') as f:
-        json.dump(data, f)
+
+
+
+def save_to_csv():
+    with open('data.csv', mode='w', newline='') as file:
+        fieldnames = ['Name', 'Duration', 'Gender', 'Age', 'Weight', 'Height', 'Running Speed(km/h)', 'Distance(km)', 'Prediction']
+        csv_writer = csv.DictWriter(file, fieldnames=fieldnames)
+        
+        csv_writer.writeheader()
+        for input_data, prediction in zip(data['name']['inputs'], data['name']['predictions']):
+            csv_writer.writerow({
+                'Name': input_data['Name'],
+                'Duration': input_data['Duration'],
+                'Gender': input_data['Gender'],
+                'Age': input_data['Age'],
+                'Weight': input_data['Weight'],
+                'Height': input_data['Height'],
+                'Running Speed(km/h)': input_data['Running Speed(km/h)'],
+                'Distance(km)': input_data['Distance(km)'],
+                'Prediction': prediction['Prediction']
+            })
 
 app = Flask(__name__)
-
 
 warnings.filterwarnings('ignore')
 
@@ -50,9 +73,9 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-        try:
-            user_input = [
-            str(request.form['Name']),
+    try:
+        user_name = request.form['Name']
+        user_input = [
             float(request.form['Duration']),
             float(request.form['Gender']),
             float(request.form['Age']),
@@ -60,20 +83,33 @@ def predict():
             float(request.form['Height']),
             float(request.form['Running Speed(km/h)']),
             float(request.form['Distance(km)'])
-            ]
-            data['name']['inputs'].append(user_input)
-            user_input = user_input.drop('Name')
-        except:
-            return render_template('index.html', prediction='Please enter valid input')
-        user_input = np.array(user_input).reshape(1, -1)
-        user_input_scaled = scaler.transform(user_input)
-        prediction = r.predict(user_input_scaled)
-        data['name']['predictions'].append(prediction[0])
-        save_data()
-        return render_template('index.html', prediction=f'Predicted Calories: {prediction[0]:.2f}')
-
-
+        ]
+        data['name']['inputs'].append({
+            "Name": user_name,
+            "Duration": user_input[0],
+            "Gender": user_input[1],
+            "Age": user_input[2],
+            "Weight": user_input[3],
+            "Height": user_input[4],
+            "Running Speed(km/h)": user_input[5],
+            "Distance(km)": user_input[6]
+        })
+    except KeyError as e:
+        return render_template('index.html', prediction=f'Missing input: {e.args[0]}')
+    except ValueError:
+        return render_template('index.html', prediction='Please enter valid input')
     
+    user_input = np.array(user_input).reshape(1, -1)
+    user_input_scaled = scaler.transform(user_input)
+    prediction = r.predict(user_input_scaled)
+    data['name']['predictions'].append({
+        "Name": user_name,
+        "Prediction": prediction[0]
+    })
+    
+    save_to_csv()
+    
+    return render_template('index.html', prediction=f'Calories burnt: {prediction[0]}')
 
 
 if __name__ == '__main__':
