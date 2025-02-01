@@ -7,10 +7,8 @@ from sklearn.svm import SVC
 from xgboost import XGBRegressor
 from flask import Flask, render_template, request
 import warnings
-from flask_ngrok import run_with_ngrok
 
 app = Flask(__name__)
-run_with_ngrok(app)
 
 
 warnings.filterwarnings('ignore')
