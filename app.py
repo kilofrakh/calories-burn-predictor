@@ -10,8 +10,10 @@ import warnings
 import json
 
 data = {
-    "inputs": [],
-    "predictions": []
+    "name":{
+        "inputs": [],
+        "predictions": []
+    }
 }
 def save_data():
     with open('data.json', 'w') as f:
@@ -50,6 +52,7 @@ def home():
 def predict():
         try:
             user_input = [
+            str(request.form['Name']),
             float(request.form['Duration']),
             float(request.form['Gender']),
             float(request.form['Age']),
@@ -58,14 +61,14 @@ def predict():
             float(request.form['Running Speed(km/h)']),
             float(request.form['Distance(km)'])
             ]
-            data['inputs'].append(user_input)
-            
+            data['name']['inputs'].append(user_input)
+            user_input = user_input.drop('Name')
         except:
             return render_template('index.html', prediction='Please enter valid input')
         user_input = np.array(user_input).reshape(1, -1)
         user_input_scaled = scaler.transform(user_input)
         prediction = r.predict(user_input_scaled)
-        data['predictions'].append(float(prediction[0]))
+        data['name']['predictions'].append(prediction[0])
         save_data()
         return render_template('index.html', prediction=f'Predicted Calories: {prediction[0]:.2f}')
 
