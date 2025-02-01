@@ -51,7 +51,7 @@ def save_to_csv():
                 'Prediction': prediction['Prediction']
             })
     
-    # Clear the data after saving to avoid duplicates
+    
     data['name']['inputs'].clear()
     data['name']['predictions'].clear()
 
