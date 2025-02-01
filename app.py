@@ -124,5 +124,6 @@ def predict():
     return render_template('index.html', prediction=f'Calories burnt: {prediction[0]}')
 
 
+
 if __name__ == '__main__':
     app.run(debug=True)
