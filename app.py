@@ -9,6 +9,8 @@ from flask import Flask, render_template, request
 import warnings
 import json
 import csv
+import os
+
 
 with open('data.csv', mode='r') as file:
     csv_reader = csv.reader(file)
@@ -22,14 +24,20 @@ data = {
     }
 }
 
-
+def save_data():
+    with open('data.json', 'w') as f:
+        json.dump(data, f)
 
 def save_to_csv():
-    with open('data.csv', mode='w', newline='') as file:
+    file_exists = os.path.isfile('data.csv')
+    
+    with open('data.csv', mode='a', newline='') as file:
         fieldnames = ['Name', 'Duration', 'Gender', 'Age', 'Weight', 'Height', 'Running Speed(km/h)', 'Distance(km)', 'Prediction']
         csv_writer = csv.DictWriter(file, fieldnames=fieldnames)
         
-        csv_writer.writeheader()
+        if not file_exists:
+            csv_writer.writeheader()
+        
         for input_data, prediction in zip(data['name']['inputs'], data['name']['predictions']):
             csv_writer.writerow({
                 'Name': input_data['Name'],
@@ -42,6 +50,10 @@ def save_to_csv():
                 'Distance(km)': input_data['Distance(km)'],
                 'Prediction': prediction['Prediction']
             })
+    
+    # Clear the data after saving to avoid duplicates
+    data['name']['inputs'].clear()
+    data['name']['predictions'].clear()
 
 app = Flask(__name__)
 
