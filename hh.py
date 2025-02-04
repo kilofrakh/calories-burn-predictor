@@ -28,7 +28,7 @@ for i in range(1, num_rows + 1):
     data.append([i, age, gender, bmi, distance, time, calories_burned])
 
 # Create DataFrame
-df = pd.DataFrame(data, columns=["RunnerID", "Age", "Gender", "BMI", "Distance (km)", "Time (minutes)", "Calories Burned"])
+df = pd.DataFrame(data, columns=["Gender","Age","Height(cm)","Weight(kg)","BMI","Running Time(min)","Running Speed(km/h)","Distance(km)","Average Heart Rate","Calories Burned"])
 
 # Save to CSV
 
