@@ -7,15 +7,8 @@ from sklearn.svm import SVC
 from xgboost import XGBRegressor
 from flask import Flask, render_template, request
 import warnings
-import json
-import csv
 import os
 
-
-with open('data.csv', mode='r') as file:
-    csv_reader = csv.reader(file)
-    for row in csv_reader:
-        print(row)
 
 data = {
     "name": {
@@ -24,32 +17,39 @@ data = {
     }
 }
 
-def save_data():
-    with open('data.json', 'w') as f:
-        json.dump(data, f)
 
 def save_to_csv():
-    file_exists = os.path.isfile('data.csv')
+    file_path = 'data.csv'
+    fieldnames = ['Name', 'Duration', 'Gender', 'Age', 'Weight', 'Height', 'Running Speed(km/h)', 'Distance(km)', 'Prediction']
     
-    with open('data.csv', mode='a', newline='') as file:
-        fieldnames = ['Name', 'Duration', 'Gender', 'Age', 'Weight', 'Height', 'Running Speed(km/h)', 'Distance(km)', 'Prediction']
-        csv_writer = csv.DictWriter(file, fieldnames=fieldnames)
+    new_data = []
+    for input_data, prediction in zip(data['name']['inputs'], data['name']['predictions']):
+        new_data.append({
+            'Name': input_data['Name'],
+            'Duration': input_data['Duration'],
+            'Gender': input_data['Gender'],
+            'Age': input_data['Age'],
+            'Weight': input_data['Weight'],
+            'Height': input_data['Height'],
+            'Running Speed(km/h)': input_data['Running Speed(km/h)'],
+            'Distance(km)': input_data['Distance(km)'],
+            'Prediction': prediction['Prediction']
+        })
+    
+    new_df = pd.DataFrame(new_data, columns=fieldnames)
+    
+   
+    if os.path.isfile(file_path):
+
+        existing_df = pd.read_csv(file_path)
+
+        combined_df = pd.concat([existing_df, new_df], ignore_index=True)
+    else:
         
-        if not file_exists:
-            csv_writer.writeheader()
-        
-        for input_data, prediction in zip(data['name']['inputs'], data['name']['predictions']):
-            csv_writer.writerow({
-                'Name': input_data['Name'],
-                'Duration': input_data['Duration'],
-                'Gender': input_data['Gender'],
-                'Age': input_data['Age'],
-                'Weight': input_data['Weight'],
-                'Height': input_data['Height'],
-                'Running Speed(km/h)': input_data['Running Speed(km/h)'],
-                'Distance(km)': input_data['Distance(km)'],
-                'Prediction': prediction['Prediction']
-            })
+        combined_df = new_df
+    
+    
+    combined_df.to_csv(file_path, index=False)
     
     
     data['name']['inputs'].clear()
@@ -127,3 +127,4 @@ def predict():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
